@@ -34,7 +34,7 @@ public class Shell {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println(previous_calls);
+			
 			String current_command = user_input.nextLine();
 			//switch only deals with internal commands
 			switch (current_command) {

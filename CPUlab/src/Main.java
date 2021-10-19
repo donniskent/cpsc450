@@ -11,6 +11,16 @@ public class Main {
 		Main main = new Main();
 		main.go();
 	}
+	
+	
+	//fix IO device - only 1 at a time. **** 
+	
+	// use some type of flags or constants to indicate which algo you are in 
+	// flags indicate preemptive / nonpreemtptive, and which DS to use for the ready queue. 
+	
+	
+	
+	
 
 	public void go() {
 
@@ -22,13 +32,21 @@ public class Main {
 
 		// read from file
 
+		// having / not having to block for IO is a factor in each of the algorithms
+		// if you dont have to do IO and you arent finished, continue until interrupted
+		// by the CPU
+
 		
-		//fifo();
-		roundRobin();
 		
 		
-		//RoundRobin(processList);
-		
+		//5 different Algos, 
+		//fifo() non 1 
+		//roundRobin() pre 2 
+		//shortestProcessNext() non 3 
+		//shortestRemainingTime() pre 4 
+		// shortestJobFirst() non - priority 5 
+		processorLoop(5);
+
 	}
 
 	public ArrayList<Process> createProcesses() {
@@ -58,201 +76,36 @@ public class Main {
 
 		return processes;
 	}
-	
-	
-	
-	public void fifo() {
-		Queue<Process> readyQueue = new QueueImplementation<Process>();
-		ArrayList<Process> ioQueue = new ArrayList<Process>();
-		ArrayList<Process> processList = new ArrayList<Process>();
-		processList = createProcesses();
-		int numProcesses = processList.size();
-		// probably need a counter to keep track of which cycle the
-		// cpu is on
-		int cycle = 0;
-		int cpuMiss = 0; 
-		int ioCounter = 0;
-		Process currentProcess = null;
-		// main loop
-		int finishedProcesses = 0;
-		while (finishedProcesses != numProcesses) {
 
-			System.out.println("Cycle number: " + cycle);
-
-			//START CYCLE 
-			
-
-			// this block fills the ready queue from the initial list of processes.
-			for (int i = 0; i < processList.size(); i++) {
-				// if a process in the processlist has
-				// an arrival time == to the current cycle, add it to the queue
-
-				// takes care of setting up the ready queue
-				if (processList.get(i).getArrivalTime() == cycle) {
-					System.out.println("added process to ready queue");
-					// pull the process into the ready queue
-					readyQueue.add(processList.remove(i));
-					i--; //since the termination condition is decrementing by one, have to re-balance
-					// remove the process from the list (may not end up doing this)
-
-				}
-
-			}
-
+	public void processorLoop(int algoFlag) {
+		//create the while loop, based on the algoFlags, different parts of the code will be initialized and/or chosen to run 
+		//in conditional statements. 
+		//the while loop will look the same as in my current methods, 
+		// but add conditionality to decide which DS and conditions to run. 
 		
-
-			//this gets a new processes from the readyqueue
-			if (currentProcess == null) {
-				currentProcess = readyQueue.remove();
-			}
-			
-			//if here with a null process, there is a cpu miss 
-			if (currentProcess == null) {
-				cpuMiss++; 
-			}
-			
-
-			
-			/* END OF CYCLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			 * Increment, and book keep. 
-			 * 
-			 */
-			
-			
-			
-			
-			
-			
-			// at the end of the cpu cycle, decrement the run time and cpuTime
-			
-			//this block increments the time spent running and the time spent in CPU for current process
-			if (currentProcess != null) {
-				currentProcess.setTimeSpentRunning(currentProcess.getTimeSpentRunning() + 1);
-				currentProcess.setTimeSpentInCPU(currentProcess.getTimeSpentInCPU() + 1);
-			}
-
-			
-			
-			
-			
-			
-			
-			
-			//deal with IO no matter whether a currentProcess is set or not. 
-			
-			//this block deals with the IOqueue
-			for (int i = 0; i < ioQueue.size(); i++) {
-				// increment the time spent in IO for each process
-				ioQueue.get(i).setTimeSpentInIO(ioQueue.get(i).getTimeSpentInIO() + 1);
-				System.out.println("processes time in IO: " + ioQueue.get(i).getTimeSpentInIO());
-
-				int ioTime = ioQueue.get(i).getTimeSpentInIO();
-				if (ioTime == ioQueue.get(i).getIoTime()) {
-					// if the process still needs to run and it is finished with io
-					// put it into the ready queue
-					// also need to reset the time spent in IO
-					ioQueue.get(i).setTimeSpentInIO(0);
-					if (ioQueue.get(i).getTimeSpentRunning() < ioQueue.get(i).getRunTime()) {
-
-						readyQueue.add(ioQueue.remove(i));
-
-					}
-					// if it doesnt need to run anymore, remove it from the queue. Process is
-					// complete
-					else {
-						
-						ioQueue.remove(i);
-						finishedProcesses++;
-					}
-
-				}
-			}
-
-			
-			if (currentProcess != null) {
-				System.out.println("Current process:");
-				System.out.println("Cpu time: " + currentProcess.getTimeSpentInCPU());
-				System.out.println("run time: " + currentProcess.getTimeSpentRunning());
-				System.out.println("IO time: " + currentProcess.getTimeSpentInIO());
-				//print the stats about the current process, then deal with book keeping for setting up the next cycle 
-				// if true, process is finished or ready to block for IO
-				
-				
-				
-				
-				// this block checks if the currentProcess is ready for IO or is finished
-				
-				if(currentProcess.getTimeSpentRunning() == currentProcess.getRunTime())
-				{
-					finishedProcesses++;
-					currentProcess = null; 
-				}
-				
-				
-				else if (currentProcess.getTimeSpentInCPU() == currentProcess.getCpuTime()) {
-					currentProcess.setTimeSpentInCPU(0);
-				
-						
-						if (currentProcess.getIoTime() > 0) {
-							System.out.println("current process added to ioqueue");
-							ioQueue.add(currentProcess);
-						} else {
-							readyQueue.add(currentProcess);
-						}
-					
-
-					// in either case, the currentProcess is made null
-					currentProcess = null;
-
-				}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			} else {
-				System.out.println("No current process");
-			}
-			
-			try {
-				TimeUnit.SECONDS.sleep(1);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-			cycle++;
-
-			// end of cpu cycle
-		} // main loop
-			// have to add 1 to total cycles because the initial cycle starts from 0
-		System.out.println("cycles: " + (cycle));
-		System.out.println("misses: " + cpuMiss);
-	}
-	
-	public void roundRobin() {
-		Queue<Process> readyQueue = new QueueImplementation<Process>();
+		//this will be conditionally chosen. 
+		Queue<Process> readyQueue;
+		if(algoFlag == 1 || algoFlag == 2) {
+		 readyQueue = new QueueImplementation<Process>();
+		}
+		else if (algoFlag == 3 ||  algoFlag == 4) {
+			readyQueue = new ProcessPriorityQueue();
+		}
+		else {
+			// flag == 5 
+			readyQueue = new ShortestJobQueue();
+		}
 		ArrayList<Process> ioQueue = new ArrayList<Process>();
 		ArrayList<Process> processList = new ArrayList<Process>();
+		ArrayList<Process> finishedList = new ArrayList<Process>();
 		processList = createProcesses();
 		int numProcesses = processList.size();
 		// probably need a counter to keep track of which cycle the
 		// cpu is on
 		int cycle = 0;
-		int cpuMiss = 0; 
-		int ioCounter = 0;
+		int cpuMiss = 0;
 		int timeSliceCounter = 0;
-		int timeSlice = 1; 
+		int timeSlice = 5;
 		Process currentProcess = null;
 		// main loop
 		int finishedProcesses = 0;
@@ -260,195 +113,265 @@ public class Main {
 
 			System.out.println("Cycle number: " + cycle);
 
-			//START CYCLE 
+			// START CYCLE
+
 			
-
-			// this block fills the ready queue from the initial list of processes.
-			for (int i = 0; i < processList.size(); i++) {
-				// if a process in the processlist has
-				// an arrival time == to the current cycle, add it to the queue
-
-				// takes care of setting up the ready queue
-				if (processList.get(i).getArrivalTime() == cycle) {
-					System.out.println("added process to ready queue");
-					// pull the process into the ready queue
-					readyQueue.add(processList.remove(i));
-					i--; //since the termination condition is decrementing by one, have to re-balance
-					// remove the process from the list (may not end up doing this)
-
-				}
-
-			}
+			//this wont be conditional, because all DS have been created to use this.
+			fillReadyQueue(processList, readyQueue, cycle);
 			
-		
-
-			//this gets a new processes from the readyqueue
+			
+			
+			//not conditional 
+			// this gets a new processes from the readyqueue
 			if (currentProcess == null) {
 				currentProcess = readyQueue.remove();
-				
-				
 			}
 			
-			//if here with a null process, there is a cpu miss 
+			//not conditional
+			// if here with a null process, there is a cpu miss
 			if (currentProcess == null) {
-				cpuMiss++; 
+				cpuMiss++;
 			}
-			
 
-			
-			/* END OF CYCLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			 * Increment, and book keep. 
+			/*
+			 * END OF CYCLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Increment, and book keep.
 			 * 
 			 */
-			
-			
-			
-			
-			
-			
+
 			// at the end of the cpu cycle, decrement the run time and cpuTime
+
+			// this block increments the time spent running and the time spent in CPU for
+			// current process
+			//not conditional
 			
-			//this block increments the time spent running and the time spent in CPU for current process
 			if (currentProcess != null) {
 				currentProcess.setTimeSpentRunning(currentProcess.getTimeSpentRunning() + 1);
 				currentProcess.setTimeSpentInCPU(currentProcess.getTimeSpentInCPU() + 1);
 				timeSliceCounter++;
 			}
-
 			
-			
-			
-			
-			
-			
-			
-			//deal with IO no matter whether a currentProcess is set or not. 
-			
-			//this block deals with the IOqueue
-			for (int i = 0; i < ioQueue.size(); i++) {
-				// increment the time spent in IO for each process
-				ioQueue.get(i).setTimeSpentInIO(ioQueue.get(i).getTimeSpentInIO() + 1);
-				System.out.println("processes time in IO: " + ioQueue.get(i).getTimeSpentInIO());
-
-				int ioTime = ioQueue.get(i).getTimeSpentInIO();
-				if (ioTime == ioQueue.get(i).getIoTime()) {
-					// if the process still needs to run and it is finished with io
-					// put it into the ready queue
-					// also need to reset the time spent in IO
-					ioQueue.get(i).setTimeSpentInIO(0);
-					if (ioQueue.get(i).getTimeSpentRunning() < ioQueue.get(i).getRunTime()) {
-
-						readyQueue.add(ioQueue.remove(i));
-
-					}
-					// if it doesnt need to run anymore, remove it from the queue. Process is
-					// complete
-					else {
-						
-						ioQueue.remove(i);
-						finishedProcesses++;
-					}
-
-				}
+			for(int i =0; i<readyQueue.size(); i++) {
+				//for each process in the readyQueue, increment the waiting time 
+				readyQueue.peek(i).setWaitingTime(readyQueue.peek(i).getWaitingTime() + 1);
+				
 			}
 
+			// deal with IO no matter whether a currentProcess is set or not.
+			//
 			
+			
+			//not conditional
+			// this block deals with the IOqueue
+			//
+			if(!ioQueue.isEmpty()) {
+			ioQueue.get(0).setTimeSpentInIO(ioQueue.get(0).getTimeSpentInIO() + 1);
+			//increment the total time the process spent in IO (not waiting on IO, just in IO)
+			ioQueue.get(0).setTotalIOTime(ioQueue.get(0).getTotalIOTime() + 1);
+			System.out.println("processes time in IO: " + ioQueue.get(0).getTimeSpentInIO());
+
+			int ioTime = ioQueue.get(0).getTimeSpentInIO();
+			if (ioTime == ioQueue.get(0).getIoTime()) {
+				// if the process still needs to run and it is finished with io
+				// put it into the ready queue
+				// also need to reset the time spent in IO
+				ioQueue.get(0).setTimeSpentInIO(0);
+				if (ioQueue.get(0).getTimeSpentRunning() < ioQueue.get(0).getRunTime()) {
+
+					readyQueue.add(ioQueue.remove(0));
+
+				}
+				// if it doesnt need to run anymore, remove it from the queue. Process is
+				// complete
+				else {
+
+					Process l = ioQueue.remove(0);
+					finishedList.add(l);
+					//finished processes need to be stored in a separate list, to print stats at the end of the 
+					// simulation. 
+					
+					l.setFinishTick(cycle);
+					
+					finishedProcesses++;
+					
+				}
+
+			}
+			
+			}
+			
+			
+			
+		
+			//the code inside here will be conditional. 
+			//based on the parameter pulled in, will decide if preemptive or non preemptive. 
 			if (currentProcess != null) {
 				System.out.println("Current process:");
 				System.out.println("Cpu time: " + currentProcess.getTimeSpentInCPU());
 				System.out.println("run time: " + currentProcess.getTimeSpentRunning());
 				System.out.println("IO time: " + currentProcess.getTimeSpentInIO());
-				//print the stats about the current process, then deal with book keeping for setting up the next cycle 
+				// print the stats about the current process, then deal with book keeping for
+				// setting up the next cycle
 				// if true, process is finished or ready to block for IO
-				
-				
-				
-				
+
 				// this block checks if the currentProcess is ready for IO or is finished
-				//it also checks if the time slice has been taken up and if it needs reset and context switched
+				// it also checks if the time slice has been taken up and if it needs reset and
+				// context switched
+
+				// context switch happens because currentProcess rather:
+				// 1. run time has been met
+				// 2. cpu time has been met
+				// 3. run out of time slice
 				
-				
-				//context switch happens because currentProcess rather:
-					//1. run time has been met
-					//2. cpu time has been met 
-					//3. run out of time slice
-				if(currentProcess.getTimeSpentRunning() == currentProcess.getRunTime())
-				{
+				if (currentProcess.getTimeSpentRunning() == currentProcess.getRunTime()) {
+					System.out.println("Process complete");
 					finishedProcesses++;
-					currentProcess = null; 
-					timeSliceCounter = 0; 
+					finishedList.add(currentProcess);
+					currentProcess.setFinishTick(cycle);
+					currentProcess = null;
+					timeSliceCounter = 0;
 
 				}
-				
-				
+
 				else if (currentProcess.getTimeSpentInCPU() == currentProcess.getCpuTime()) {
 					currentProcess.setTimeSpentInCPU(0);
-				
-						
-						if (currentProcess.getIoTime() > 0) {
-							System.out.println("current process added to ioqueue");
-							ioQueue.add(currentProcess);
-						} else {
-							readyQueue.add(currentProcess);
-						}
-					
+
+					if (currentProcess.getIoTime() > 0) {
+						System.out.println("current process added to ioqueue");
+						ioQueue.add(currentProcess);
+					} else {
+						readyQueue.add(currentProcess);
+					}
 
 					// in either case, the currentProcess is made null
 					currentProcess = null;
-					timeSliceCounter = 0; 
+					timeSliceCounter = 0;
 
 				}
-
-				else if(timeSliceCounter == timeSlice) {
+				
+				//if an even algo, then it is preemptive
+				else if (algoFlag % 2 == 0 && timeSliceCounter == timeSlice) {
 					System.out.println("Used up timeslice");
-					
-					readyQueue.add(currentProcess);
-					currentProcess = null; 
-					timeSliceCounter = 0; 
 
-					
+					readyQueue.add(currentProcess);
+					currentProcess = null;
+					timeSliceCounter = 0;
+
 				}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+
 			} else {
 				System.out.println("No current process");
 			}
 			
-			try {
-				TimeUnit.SECONDS.sleep(1);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
+
+			
 			cycle++;
 
 			// end of cpu cycle
 		} // main loop
-			// have to add 1 to total cycles because the initial cycle starts from 0
-		System.out.println("cycles: " + (cycle));
-		System.out.println("misses: " + cpuMiss);
+			
+		
+		
+		
+		
+		System.out.println("Finished--------------------------------------");
+		finishedListReporting(finishedList,cycle,cpuMiss);
 		
 		
 		
 	}
-	
-	public void shortestProcessNext() {
-		
-	}
-	
+
 	
 
-}
+	
+	
+	
+	
+	
+	public void finishedListReporting(ArrayList<Process> finishedList, float numCycles, float numMisses) {
+		//using the finishedList, find what we need to find. 
+				//Throughput - Processes Complete / time elapsed X 100 
+				//CPU utilization - cycles - misses / cycles  
+				// I/o utilization - cycles in IO / cycles 
+				// turnaround time average - finish tick - start 
+				//waiting time - ticks not as the current process or in I/0 
+	
+		//for each process in the list, print: 
+		// Process: 
+		// Time tick the process finsihed 
+		//Turnaround time 
+		// I/0 time 
+		// waiting time 
+		float cpuUtilization = ((numCycles - numMisses) / numCycles) * 100;
+		int ioUtilization = 0;
+		int throughput = 0; 
+		int turnaroundTime = 0;
+		int waitingTime = 0; 
+		
+		for(int i =0; i < finishedList.size(); i++) {
+			System.out.println("Process:");
+			System.out.println("Total time spent in IO: " + finishedList.get(i).getTotalIOTime());
+			System.out.println("Finished on tick: " + finishedList.get(i).getFinishTick());
+			System.out.println("Turnaround Time: " + (finishedList.get(i).getFinishTick() - finishedList.get(i).getArrivalTime()));
+			System.out.println("Waiting time: " + finishedList.get(i).getWaitingTime());
+			// after printing, add these to the running totals to get the overal avergaes 
+			
+			//average turnaround time is the turnaround time of each process divided by numProcesses
+			turnaroundTime += (finishedList.get(i).getFinishTick() - finishedList.get(i).getArrivalTime());
+			waitingTime += finishedList.get(i).getWaitingTime();
+			ioUtilization += finishedList.get(i).getTotalIOTime();
+		}
+	
+	System.out.println("CPU utilization: " + cpuUtilization + " %");
+	float calcioUtilization = ioUtilization/numCycles;
+	System.out.println("IO utilization: " + calcioUtilization + " %");
+	System.out.println("Throughput: " + ((finishedList.size())/numCycles) * 100 + " per 100 cycles");
+	System.out.println("Average Wait Time: " + (waitingTime/finishedList.size()));
+	
+	
+	
+	
+	
+	
+	
+	}
+	
+	
+	
+	public void fillReadyQueue(ArrayList<Process> processList, Queue<Process> readyQueue, int cycle) {
+		for (int i = 0; i < processList.size(); i++) {
+			// if a process in the processlist has
+			// an arrival time == to the current cycle, add it to the queue
+
+			// takes care of setting up the ready queue
+			if (processList.get(i).getArrivalTime() == cycle) {
+				System.out.println("added process to ready queue");
+				// pull the process into the ready queue
+				readyQueue.add(processList.remove(i));
+				i--; // since the termination condition is decrementing by one, have to re-balance
+				// remove the process from the list (may not end up doing this)
+
+			}
+
+		}
+		for(int i =0; i < readyQueue.size(); i ++) {
+			System.out.println(readyQueue.peek(i).getRunTime());
+		}
+	
+	
+	
+	
+	
+	}
+
+
+	
+
+
+}	
+
+		
+		
+		
+	
+
+

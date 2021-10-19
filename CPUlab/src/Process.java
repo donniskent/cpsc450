@@ -16,7 +16,8 @@ public class Process {
 	private int finishTick;
 	//arrival tick to finish tick 
 	private int turnaroundTime;
-	//total ticks spent int IO
+	
+	//total ticks spent in IO
 	private int totalIOTime;
 	
 	//time spent waiting in the readyqueue

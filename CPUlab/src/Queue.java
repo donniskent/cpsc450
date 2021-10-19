@@ -6,4 +6,5 @@ public interface Queue <T>
     boolean isEmpty ();
     int size(); 
     T peek (int index);
+    
 }

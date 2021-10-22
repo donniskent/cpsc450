@@ -46,6 +46,7 @@ public class Main {
 		//shortestRemainingTime() pre 4 
 		// shortestJobFirst() non - priority 5 
 		processorLoop(5);
+		
 
 	}
 
@@ -111,7 +112,7 @@ public class Main {
 		int finishedProcesses = 0;
 		while (finishedProcesses != numProcesses) {
 
-			System.out.println("Cycle number: " + cycle);
+		//	System.out.println("Cycle number: " + cycle);
 
 			// START CYCLE
 
@@ -167,7 +168,7 @@ public class Main {
 			ioQueue.get(0).setTimeSpentInIO(ioQueue.get(0).getTimeSpentInIO() + 1);
 			//increment the total time the process spent in IO (not waiting on IO, just in IO)
 			ioQueue.get(0).setTotalIOTime(ioQueue.get(0).getTotalIOTime() + 1);
-			System.out.println("processes time in IO: " + ioQueue.get(0).getTimeSpentInIO());
+		//	System.out.println("processes time in IO: " + ioQueue.get(0).getTimeSpentInIO());
 
 			int ioTime = ioQueue.get(0).getTimeSpentInIO();
 			if (ioTime == ioQueue.get(0).getIoTime()) {
@@ -205,10 +206,10 @@ public class Main {
 			//the code inside here will be conditional. 
 			//based on the parameter pulled in, will decide if preemptive or non preemptive. 
 			if (currentProcess != null) {
-				System.out.println("Current process:");
-				System.out.println("Cpu time: " + currentProcess.getTimeSpentInCPU());
-				System.out.println("run time: " + currentProcess.getTimeSpentRunning());
-				System.out.println("IO time: " + currentProcess.getTimeSpentInIO());
+			//	System.out.println("Current process:");
+			//	System.out.println("Cpu time: " + currentProcess.getTimeSpentInCPU());
+			//	System.out.println("run time: " + currentProcess.getTimeSpentRunning());
+			//	System.out.println("IO time: " + currentProcess.getTimeSpentInIO());
 				// print the stats about the current process, then deal with book keeping for
 				// setting up the next cycle
 				// if true, process is finished or ready to block for IO
@@ -236,7 +237,7 @@ public class Main {
 					currentProcess.setTimeSpentInCPU(0);
 
 					if (currentProcess.getIoTime() > 0) {
-						System.out.println("current process added to ioqueue");
+					//	System.out.println("current process added to ioqueue");
 						ioQueue.add(currentProcess);
 					} else {
 						readyQueue.add(currentProcess);
@@ -250,7 +251,7 @@ public class Main {
 				
 				//if an even algo, then it is preemptive
 				else if (algoFlag % 2 == 0 && timeSliceCounter == timeSlice) {
-					System.out.println("Used up timeslice");
+				//	System.out.println("Used up timeslice");
 
 					readyQueue.add(currentProcess);
 					currentProcess = null;
@@ -323,11 +324,11 @@ public class Main {
 	
 	System.out.println("CPU utilization: " + cpuUtilization + " %");
 	float calcioUtilization = ioUtilization/numCycles;
-	System.out.println("IO utilization: " + calcioUtilization + " %");
+	System.out.println("IO utilization: " + (calcioUtilization * 100) + " %");
 	System.out.println("Throughput: " + ((finishedList.size())/numCycles) * 100 + " per 100 cycles");
 	System.out.println("Average Wait Time: " + (waitingTime/finishedList.size()));
-	
-	
+	System.out.println("Total cycles: " + numCycles);
+	System.out.println("Total misses: " + numMisses);
 	
 	
 	
@@ -344,7 +345,7 @@ public class Main {
 
 			// takes care of setting up the ready queue
 			if (processList.get(i).getArrivalTime() == cycle) {
-				System.out.println("added process to ready queue");
+			//	System.out.println("added process to ready queue");
 				// pull the process into the ready queue
 				readyQueue.add(processList.remove(i));
 				i--; // since the termination condition is decrementing by one, have to re-balance
@@ -354,7 +355,7 @@ public class Main {
 
 		}
 		for(int i =0; i < readyQueue.size(); i ++) {
-			System.out.println(readyQueue.peek(i).getRunTime());
+		//	System.out.println(readyQueue.peek(i).getRunTime());
 		}
 	
 	

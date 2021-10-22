@@ -16,7 +16,7 @@ public class ShortestJobQueue implements Queue<Process> {
 		
 		if(items.size() == 0) {
 			items.add(item);
-		System.out.println("Success");
+		//System.out.println("Success");
 		}
 		
 		
@@ -25,7 +25,7 @@ public class ShortestJobQueue implements Queue<Process> {
 			
 			if( item.getCpuTime() < items.get(i).getCpuTime()) {
 				items.add(i, item);
-				System.out.println("Success");
+				//System.out.println("Success");
 				break;
 			} 
 			else if (item.getCpuTime() < items.get(i).getCpuTime()) {

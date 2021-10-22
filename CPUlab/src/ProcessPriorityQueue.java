@@ -17,7 +17,7 @@ public class ProcessPriorityQueue implements Queue<Process>{
 		
 		if(items.size() == 0) {
 			items.add(item);
-		System.out.println("Success");
+		//System.out.println("Success");
 		}
 		
 		
@@ -26,12 +26,10 @@ public class ProcessPriorityQueue implements Queue<Process>{
 			int remainSpot = items.get(i).getRunTime() - items.get(i).getTimeSpentRunning();
 			if(remainingTime < remainSpot) {
 				items.add(i, item);
-				System.out.println("Success");
+			//	System.out.println("Success");
 				break;
 			} 
-			else if (remainingTime == remainSpot) {
-				continue;
-			}
+			
 			else if(i == items.size() -1 ) {
 				items.add(item);
 				break;

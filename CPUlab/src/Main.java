@@ -275,7 +275,7 @@ public class Main {
 				}
 				
 				//if an even algo, then it is preemptive
-				else if (algoFlag % 2 == 0 && timeSliceCounter == timeSlice) {
+				else if ((algoFlag % 2 == 0 || algoFlag ==5) && timeSliceCounter == timeSlice) {
 				//	System.out.println("Used up timeslice");
 
 					readyQueue.add(currentProcess);

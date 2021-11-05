@@ -24,20 +24,20 @@ public class Main {
 
 	public void go() {
 
-		// read from file, in a loop, make all the processes, setting all the necessary
-		// stats
-		// have a cpu loop, where the end of the loop is 1 cycle.
-		// based on which ever algo is being used, choose a process, run it for allotted
-		// time or whatever,
-
-		// read from file
-
-		// having / not having to block for IO is a factor in each of the algorithms
-		// if you dont have to do IO and you arent finished, continue until interrupted
-		// by the CPU
+		
 
 		
+		//for reading from keyboard: 
+		//1. return an arraylist of the values. 
+		//2. to make sure that each 
 		
+		
+		
+		ArrayList<Integer> data = read();
+		
+		
+		
+		//System.out.println(test.size());
 		
 		//5 different Algos, 
 		//fifo() non 1 
@@ -45,13 +45,31 @@ public class Main {
 		//shortestProcessNext() non 3 
 		//shortestRemainingTime() pre 4 
 		// shortestJobFirst() non - priority 5 
-		processorLoop(5);
+	
+		System.out.println("FIFO: ");
+	
+		processorLoop(1, data);
+		
+		System.out.println("RR: ");
+		processorLoop(2,data);
+		System.out.println("SPN: ");
+		
+		processorLoop(3,data);
+		System.out.println("SRT: ");
+		processorLoop(4,data);
+		System.out.println("SJN: ");
+		processorLoop(5,data);
 		
 
 	}
 
 	public ArrayList<Process> createProcesses() {
 		ArrayList<Process> processes = new ArrayList<Process>();
+		
+		
+		
+		
+		
 		try {
 			File myFile = new File("processes.txt");
 			Scanner fileScan = new Scanner(myFile);
@@ -78,7 +96,12 @@ public class Main {
 		return processes;
 	}
 
-	public void processorLoop(int algoFlag) {
+	
+
+	
+	
+	
+	public void processorLoop(int algoFlag, ArrayList<Integer> data) {
 		//create the while loop, based on the algoFlags, different parts of the code will be initialized and/or chosen to run 
 		//in conditional statements. 
 		//the while loop will look the same as in my current methods, 
@@ -99,7 +122,9 @@ public class Main {
 		ArrayList<Process> ioQueue = new ArrayList<Process>();
 		ArrayList<Process> processList = new ArrayList<Process>();
 		ArrayList<Process> finishedList = new ArrayList<Process>();
-		processList = createProcesses();
+		processList = makeProcesses(data);
+		
+		
 		int numProcesses = processList.size();
 		// probably need a counter to keep track of which cycle the
 		// cpu is on
@@ -224,7 +249,7 @@ public class Main {
 				// 3. run out of time slice
 				
 				if (currentProcess.getTimeSpentRunning() == currentProcess.getRunTime()) {
-					System.out.println("Process complete");
+				//	System.out.println("Process complete");
 					finishedProcesses++;
 					finishedList.add(currentProcess);
 					currentProcess.setFinishTick(cycle);
@@ -260,7 +285,7 @@ public class Main {
 				}
 
 			} else {
-				System.out.println("No current process");
+			//	System.out.println("No current process");
 			}
 			
 
@@ -274,15 +299,12 @@ public class Main {
 		
 		
 		
-		System.out.println("Finished--------------------------------------");
+		//System.out.println("Finished--------------------------------------");
 		finishedListReporting(finishedList,cycle,cpuMiss);
 		
 		
 		
 	}
-
-	
-
 	
 	
 	
@@ -322,13 +344,18 @@ public class Main {
 			ioUtilization += finishedList.get(i).getTotalIOTime();
 		}
 	
-	System.out.println("CPU utilization: " + cpuUtilization + " %");
+		
+		
+	//prints out, for each of the algorithms the 
+	System.out.println("CPU utilization: " +cpuUtilization);
 	float calcioUtilization = ioUtilization/numCycles;
-	System.out.println("IO utilization: " + (calcioUtilization * 100) + " %");
-	System.out.println("Throughput: " + ((finishedList.size())/numCycles) * 100 + " per 100 cycles");
-	System.out.println("Average Wait Time: " + (waitingTime/finishedList.size()));
+	System.out.println("IO utilization: " + calcioUtilization * 100);
+	System.out.println("Average Throughput: " + ((finishedList.size())/numCycles) * 100 );
+	System.out.println("Average waiting time: " +waitingTime/finishedList.size());
 	System.out.println("Total cycles: " + numCycles);
-	System.out.println("Total misses: " + numMisses);
+	System.out.println("Number of misses: " + numMisses);
+	
+	System.out.println("Average turnaround Time: " + (turnaroundTime/finishedList.size()));
 	
 	
 	
@@ -364,15 +391,104 @@ public class Main {
 	
 	}
 
+	
+	
 
 	
+
+
+	
+	
+	
+	
+	
+	public ArrayList<Integer> read () {
+		System.out.println("Input your processes below: ");
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		Scanner scan = new Scanner(System.in);
+		try {
+		int num = scan.nextInt();
+		
+		
+	for (int i=0; i < num*4; i++ ) {
+			int b = scan.nextInt();
+			
+			results.add(b);
+		}
+		//this populates an arrayList with all the ints that the user enters into the CLI
+		
+		}
+		catch (Exception e) {
+			System.out.println("Wrong input");
+			read();
+		}
+	
+		scan.close();
+	return results;
+		
+	
+	
+	
+	
+	}
+
+	public ArrayList<Process> makeProcesses(ArrayList<Integer> data) {
+		ArrayList<Process> processes = new ArrayList<Process>();
+		//data.remove(0); //the number of Processes
+		int arrival;
+		int run;
+		int cpu;
+		int io;
+		
+		for(int i =0; i < data.size(); i+=4) {
+			arrival = data.get(i);
+			run = data.get(i+1);
+			cpu = data.get(i+2);
+			io = data.get(i+3);
+			processes.add(new Process(arrival,run,cpu,io));
+		}
+		
+		
+		
+		return processes;
+		
+		
+	}
+
 
 
 }	
 
 		
 		
-		
+		/* 1.a function that reads the input, puts it into an array list 
+		 * 2. Pass this arrayList to each function 
+		 * 3. first number is how many processes to make
+		 * 
+		 * 
+		 * 
+		 * ArrayList<Process> createProcesses(ArrayList<Integers> data)
+		 * Processes
+		 * data.get(0) = numProcesses
+		 * numProcesses.remove(0) gets rid of the counter. every other number is the next variable
+		 * 
+		 * 
+		 * for (int i = 0; i < numProcesses; i+=4) {
+				arrival = numProcesses
+				run = numProcesses + 1
+				cpu = numProcesses + 2
+				io = numProcesses + 3
+				processes.add(new Process(arrival, run, cpu, io));
+			}
+		 *	
+		 *  
+		 *
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * */
 	
 
 

@@ -66,11 +66,11 @@ public class Main {
 			// 2. Get page # from Address
 			String currentPageNumHex = currentPageHex.substring(0, 2);
 			int decimal = Integer.parseInt(currentPageNumHex, 16);
-			System.out.println(decimal);
+			//System.out.println(decimal);
 			// 3. See if page is in TLB
 			if (TLB.contains(currentPageNumHex)) {
 				//TLB Hit. Update RAM queue so that the most recently used element is on the end of the queue. 
-				System.out.println("TLB Hit");
+			//	System.out.println("TLB Hit");
 				
 				//only runs for LRU. On a pageTable hit, move the most recently used element
 				// to the end. This makes the least recently used element move to element 0
@@ -85,7 +85,7 @@ public class Main {
 			//TLB miss, see if going to be a page fault. 
 			else {
 				
-				System.out.println("Not in TLB");
+			//	System.out.println("Not in TLB");
 
 				//Check page table to see if in RAM 
 				if (pageTable[decimal] == false) {
@@ -94,19 +94,19 @@ public class Main {
 					
 					
 					// check if spot in RAM is open
-					if (RAM.size() < 5) {
+					if (RAM.size() < 56) {
 						// room in RAM, set to true
 						pageTable[decimal] = true;
 						// add to the end of RAM
 						RAM.add(decimal);
 						
-						System.out.println("Page Fault, Room in RAM");
+					//	System.out.println("Page Fault, Room in RAM");
 
 					} 
 					
 					//no room in RAM, have to replace a page 
 					else {
-						System.out.println("Page Fault, No room in RAM");
+					//	System.out.println("Page Fault, No room in RAM");
 						
 						//regardless of algo, treat the arraylist as a queue and remove the 0th
 						//arrayList element. 
@@ -135,12 +135,13 @@ public class Main {
 
 			}
 
-			System.out.println(currentPageNumHex);
+			//System.out.println("RAM size: " + RAM.size());
 
 		}
 		
 		
-		
+		/*
+		 * Print statements for debugging
 		System.out.println("---------");
 		for(int i =0; i < TLB.size();i++) {
 			System.out.println(TLB.get(i));
@@ -150,6 +151,7 @@ public class Main {
 		for(int i =0; i < RAM.size(); i++) {
 			System.out.println(RAM.get(i));
 		}
+		*/
 		System.out.println("RAM: " + RAM.size());
 		System.out.println("Faults: " + pageFaultCounter);
 		System.out.println("Hits: " + TLBHitCounter);
@@ -174,7 +176,7 @@ public class Main {
 
 		} catch (Exception e) {
 			System.out.println("Wrong input");
-			
+			results = read();
 		}
 
 		scan.close();
@@ -190,6 +192,7 @@ public class Main {
 
 	public void LRU(ArrayList<Integer> RAM, int pageNum) {
 		int index = RAM.indexOf(pageNum);
+		
 		int hold = RAM.remove(index);
 		RAM.add(hold);
 	}

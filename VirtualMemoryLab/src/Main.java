@@ -35,7 +35,7 @@ public class Main {
 		
 		ArrayList<String> TLB = new ArrayList<String>();
 		ArrayList<Integer> RAM = new ArrayList<Integer>();
-
+		int numAddresses = virtualAddresses.size();
 		// TLB is a small PT where the indices only indicate
 		// FIFO location
 		// Needs to have first two chars represent page # and second 2 to represent
@@ -99,23 +99,25 @@ public class Main {
 						pageTable[decimal] = true;
 						// add to the end of RAM
 						RAM.add(decimal);
-						
+					
+					//	debug print 
 					//	System.out.println("Page Fault, Room in RAM");
 
 					} 
 					
 					//no room in RAM, have to replace a page 
 					else {
-					//	System.out.println("Page Fault, No room in RAM");
+						//debug print 
+						//	System.out.println("Page Fault, No room in RAM");
 						
-						//regardless of algo, treat the arraylist as a queue and remove the 0th
-						//arrayList element. 
+						//removes a page from RAM, replaces it, sets the 
+						//value for the removed page to false in the page table. 
 						pageTable[queueRemove(RAM, decimal)] = false;
 						
 					}
 
 				} else {
-					System.out.println("In page table.");
+					//System.out.println("In page table.");
 					// if LRU, have to deal with queue
 
 					//only runs for LRU. On a pageTable hit, move the most recently used element
@@ -128,13 +130,15 @@ public class Main {
 				// regardless of whether in or not in PT,
 				// update the TLB with the newest page
 				// TLB update
+				
+				//If TLB is full, remove the head, add current page to tail 
 				if (TLB.size() == 16)
 					TLB.remove(0);
-
+				//On TLB misses, add the current page to the TLB
 				TLB.add(currentPageNumHex);
 
 			}
-
+			//debug print
 			//System.out.println("RAM size: " + RAM.size());
 
 		}
@@ -152,14 +156,20 @@ public class Main {
 			System.out.println(RAM.get(i));
 		}
 		*/
+		
+		if(algo ==1) {
+			System.out.println("FIFO Page Replacement: ");
+		}
+		else {
+			System.out.println("LRU Page Replacement: ");
+		}
 		System.out.println("RAM: " + RAM.size());
 		System.out.println("Faults: " + pageFaultCounter);
+		System.out.println("Fault Rate: " + (((float) pageFaultCounter/numAddresses) * 100) + "%");
 		System.out.println("Hits: " + TLBHitCounter);
+		System.out.println("Hit Rate: " + ((float) TLBHitCounter/numAddresses  * 100) + "%"  );
 	}
 	
-	
-	
-
 	public ArrayList<String> read() {
 		System.out.println("Input your Addresses below: ");
 		ArrayList<String> results = new ArrayList<String>();
